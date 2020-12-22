@@ -6,7 +6,7 @@ object Show {
   // it is concise. the compiler looks at the show method in trait and interprets
   // the functions that I give here to transform to a string the values .
   implicit val showChar: Show[Char] = ch => s"'$ch'"
-  implicit val showString: Show[String] = str => """"$str""""
+  implicit val showString: Show[String] = str => s""""$str""""
 
 //  implicit val showAny: Show[Any] = any => any match{
 //    case x: Int => showInt.show(x)
@@ -19,15 +19,21 @@ object Show {
 trait Show[T] { def show(value: T): String }
 
 
-class Annex()
 
 object Annex{
-  implicit def conversion[T: Show](t:T): Annex = new Annex()
+  implicit def conversion[T: Show](t:T): Annex[T] =
+    new Annex[T](t, implicitly[Show[T]])
 }
+
+
+class Annex[T](value: T, typeclass: Show[T]){
+  def apply(): String = typeclass.show(value)
+}
+
 object Main {
-  
-  def printAll(xs: Annex*): Unit =
-    xs.foreach { x => println(x) }
+
+  def printAll[T](xs: Annex[_]*): Unit = // underscore makes annex a wildcard type
+    xs.foreach { x => println(x()) }
   
   def main(args: Array[String]): Unit = {
 /*     I want to printall, but the compiler does not allow it (no implicits found)
@@ -39,9 +45,9 @@ object Main {
      Instead, in this commit, I introduce an Annex class and object
      I use [T: Show] in th conversion, so that if we insert an unwanted type that is not i show,
      it will produce an error.
-     
+
 
 */
-    printAll(1, "two", '3', 4.0)
+    printAll(1, "two", '3')
   }
 }
