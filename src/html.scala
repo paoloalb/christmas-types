@@ -29,15 +29,15 @@ object Html {
     )
   )
 
-  val shouldNotCompile = table(
-    thead(
-      // the problem here is that html says that th must be inside a tr.
-      // I need to enforce this rule, so that this does actually not compile
-
-      // After enforcing the rule (in this commit), the compiler does not like it
-      th("Misplaced <th/>")
-    )
-  )
+//  val shouldNotCompile = table(
+//    thead(
+//      // the problem here is that html says that th must be inside a tr.
+//      // I need to enforce this rule, so that this does actually not compile
+//
+//      // After enforcing the rule (in this commit), the compiler does not like it
+//      th("Misplaced <th/>")
+//    )
+//  )
 
   def main(args: Array[String]): Unit = println(myTable)
 
